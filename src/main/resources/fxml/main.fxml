@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.Insets?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.alexzhelyapov1.controllers.MainController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexzhelyapov1.controllers.MainController">
 
     <top>
         <ToolBar>
-            <Button text="Добавить проект" onAction="#handleAddProject">
+            <Button onAction="#handleAddProject" text="Добавить проект">
                 <padding>
-                    <Insets top="2" right="5" bottom="2" left="5"/>
+                    <Insets bottom="2" left="5" right="5" top="2" />
                 </padding>
             </Button>
-            <Button text="Добавить день" onAction="#handleAddDay">
+            <Button onAction="#handleAddDay" text="Добавить день">
                 <padding>
-                    <Insets top="2" right="5" bottom="2" left="5"/>
+                    <Insets bottom="2" left="5" right="5" top="2" />
                 </padding>
             </Button>
         </ToolBar>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true">
+        <ScrollPane fitToHeight="true" fitToWidth="true">
             <TableView fx:id="tableView" editable="true">
                 <columns>
-                    <TableColumn fx:id="dateColumn" text="Дата" editable="false">
+                    <TableColumn fx:id="dateColumn" editable="false" sortable="false" text="Дата">
                         <cellValueFactory>
                             <PropertyValueFactory property="date" />
                         </cellValueFactory>

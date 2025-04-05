@@ -54,4 +54,13 @@ public class ProjectDAO {
             pstmt.executeUpdate();
         }
     }
+
+    public void deleteProject(int projectId) throws SQLException {
+        String sql = "DELETE FROM projects WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, projectId);
+            pstmt.executeUpdate();
+        }
+    }
 }

@@ -60,4 +60,13 @@ public class TrackingDAO {
             pstmt.executeBatch();
         }
     }
+
+    public void deleteProjectTracking(int projectId) throws SQLException {
+        String sql = "DELETE FROM tracking WHERE project_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, projectId);
+            pstmt.executeUpdate();
+        }
+    }
 }

@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.MouseButton;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -76,17 +77,20 @@ public class MainController implements Initializable {
         tableView.getColumns().add(dateColumn);
 
         for (Project project : projects) {
-            TableColumn<TrackingDay, Boolean> col = new TableColumn<>(project.getName());
+            TableColumn<TrackingDay, Boolean> col = new TableColumn<>();
+            col.setSortable(false);
 
-            // Обработчик клика на заголовок
-            col.getStyleClass().add("editable-header");
+            Label headerLabel = new Label(project.getName());
+            headerLabel.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+//                    showAlert("INFO", "Нажат заголовок для проекта: " + project.getName());
+                    handleEditProject(project); // Вызываем ваш метод обработки
+                }
+                event.consume();
+            });
 
-            // Обработка клика на заголовок
-//            col.getStyleableNode().setOnMouseClicked(e -> {
-//                if (e.getClickCount() == 1) {
-//                    handleEditProject(project);
-//                }
-//            });
+            headerLabel.setStyle("-fx-cursor: hand; -fx-text-fill: blue; -fx-underline: true;");
+            col.setGraphic(headerLabel);
 
             col.setCellValueFactory(cellData -> {
                 TrackingDay day = cellData.getValue();
@@ -94,7 +98,6 @@ public class MainController implements Initializable {
             });
 
             col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
-
             col.setOnEditCommit(event -> {
                 try {
                     TrackingDay day = event.getRowValue();
@@ -113,34 +116,45 @@ public class MainController implements Initializable {
     }
 
     private void handleEditProject(Project project) {
-        showAlert("None", "handleEditProject");
-//        try {
-////            FXMLLoader loader = new FXMLLoader(
-////                    getClass().getResource("/fxml/edit-project-dialog.fxml")
-////            );
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("/fxml/add-project-dialog.fxml"));
-//
-//            Dialog<ButtonType> dialog = new Dialog<>();
-//            dialog.setDialogPane(loader.load());
-//            dialog.setTitle("Редактирование проекта");
-//
-//            EditProjectDialogController controller = loader.getController();
-//            controller.setProject(project);
-//
-//            Optional<ButtonType> result = dialog.showAndWait();
-//            if (result.isPresent() && result.get() == ButtonType.OK) {
-//                if (controller.isInputValid()) {
-//                    controller.updateProject();
-//                    projectDAO.updateProject(project);
-//                    refreshProjects();
-//                } else {
-//                    showAlert("Ошибка", "Название проекта не может быть пустым");
-//                }
-//            }
-//        } catch (IOException | SQLException e) {
-//            showError("Ошибка редактирования: " + e.getMessage());
-//        }
+        try {
+//            FXMLLoader loader = new FXMLLoader(
+//                    getClass().getResource("/fxml/edit-project-dialog.fxml")
+//            );
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/edit-project-dialog.fxml"));
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(loader.load());
+            dialog.setTitle("Редактирование проекта");
+
+            EditProjectDialogController controller = loader.getController();
+            controller.setProject(project);
+
+//            Button deleteButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.);
+//            deleteButton.setOnAction(e -> controller.handleDelete());
+//            deleteButton.setStyle("-fx-text-fill: red;"); 
+
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.get().getButtonData() == ButtonBar.ButtonData.LEFT) {
+                if (showConfirmation("Удаление проекта",
+                        "Вы уверены, что хотите удалить проект '" + project.getName() + "'?")) {
+
+                    projectDAO.deleteProject(project.getId());
+                    trackingDAO.deleteProjectTracking(project.getId());
+                    refreshProjects();
+                }
+            } else if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                if (controller.isInputValid()) {
+                    controller.updateProject();
+                    projectDAO.updateProject(project);
+                    refreshProjects();
+                } else {
+                    showAlert("Ошибка", "Название проекта не может быть пустым");
+                }
+            }
+        } catch (IOException | SQLException e) {
+            showError("Ошибка редактирования: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -217,6 +231,8 @@ public class MainController implements Initializable {
         alert.setTitle("Error");
         alert.setContentText(message);
         alert.showAndWait();
+
+        System.out.println("ERROR MESSAGE: " + message);
     }
 
     private void showAlert(String title, String content) {
@@ -225,6 +241,14 @@ public class MainController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private boolean showConfirmation(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        return alert.showAndWait().get() == ButtonType.OK;
     }
 
 }
