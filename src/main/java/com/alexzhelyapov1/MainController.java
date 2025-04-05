@@ -4,12 +4,16 @@ package com.alexzhelyapov1;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
+
+import java.io.Console;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -112,67 +116,35 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleAddProject() {
-        // Создаем диалоговое окно
-        Dialog<Project> dialog = new Dialog<>();
-        dialog.setTitle("Новый проект");
-        dialog.setHeaderText("Добавление нового проекта");
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/add-project-dialog.fxml"));
 
-        // Устанавливаем кнопки
-        ButtonType addButtonType = new ButtonType("Добавить", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(loader.load());
+            dialog.setTitle("Новый проект");
 
-        // Создаем форму
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField nameField = new TextField();
-        TextField tagsField = new TextField();
-        DatePicker deadlinePicker = new DatePicker();
-
-        grid.add(new Label("Название:"), 0, 0);
-        grid.add(nameField, 1, 0);
-        grid.add(new Label("Теги:"), 0, 1);
-        grid.add(tagsField, 1, 1);
-        grid.add(new Label("Дедлайн:"), 0, 2);
-        grid.add(deadlinePicker, 1, 2);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Преобразуем результат в объект Project
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == addButtonType) {
-                if (nameField.getText().trim().isEmpty()) {
-                    showError("Название проекта не может быть пустым!");
-                    return null;
-                }
-
-                return new Project(
-                        nameField.getText().trim(),
-                        tagsField.getText().trim(),
-                        deadlinePicker.getValue()
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                AddProjectDialogController controller = loader.getController();
+                Project project = new Project(
+                        controller.getName(),
+                        controller.getTags(),
+                        controller.getDeadline()
                 );
-            }
-            return null;
-        });
-
-        // Обработка результата
-        Optional<Project> result = dialog.showAndWait();
-        result.ifPresent(project -> {
-            try {
-                // Сохраняем в БД
                 projectDAO.addProject(project);
-
-                // Обновляем UI
-                projects.setAll(projectDAO.getAllProjects());
-                setupTableColumns();
-
-            } catch (SQLException e) {
-                showError("Ошибка сохранения проекта: " + e.getMessage());
-                e.printStackTrace();
+                refreshProjects();
             }
-        });
+        } catch (IOException | SQLException e) {
+            showError("Ошибка: " + e.getMessage());
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void refreshProjects() throws SQLException {
+        projects.setAll(projectDAO.getAllProjects());
+        setupTableColumns();
     }
 
     private void showError(String message) {

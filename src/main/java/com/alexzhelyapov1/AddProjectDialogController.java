@@ -4,27 +4,22 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
+import java.time.LocalDate;
+
 public class AddProjectDialogController {
     @FXML private TextField nameField;
     @FXML private TextField tagsField;
     @FXML private DatePicker deadlinePicker;
 
-    public Project getProject() {
-        if (isInputValid()) {
-            return new Project(
-                    nameField.getText().trim(),
-                    tagsField.getText().trim(),
-                    deadlinePicker.getValue()
-            );
-        }
-        return null;
+    public String getName() {
+        return nameField.getText().trim();
     }
 
-    private boolean isInputValid() {
-        if (nameField.getText().trim().isEmpty()) {
-            nameField.requestFocus();
-            return false;
-        }
-        return true;
+    public String getTags() {
+        return tagsField.getText().trim();
+    }
+
+    public LocalDate getDeadline() {
+        return deadlinePicker.getValue();
     }
 }
