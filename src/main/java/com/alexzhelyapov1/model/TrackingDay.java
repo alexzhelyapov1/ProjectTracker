@@ -1,4 +1,4 @@
-package com.alexzhelyapov1;
+package com.alexzhelyapov1.model;
 
 // TrackingDay.java
 import javafx.beans.property.BooleanProperty;
@@ -41,5 +41,9 @@ public class TrackingDay {
 
     public LocalDate getDate() {
         return date.get();
+    }
+
+    public boolean hasDate(LocalDate date) {
+        return this.date.equals(date);
     }
 }

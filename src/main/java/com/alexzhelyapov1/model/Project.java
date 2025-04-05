@@ -1,4 +1,4 @@
-package com.alexzhelyapov1;
+package com.alexzhelyapov1.model;
 
 // Project.java
 import java.time.LocalDate;

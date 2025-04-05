@@ -1,4 +1,4 @@
-package com.alexzhelyapov1;
+package com.alexzhelyapov1.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;

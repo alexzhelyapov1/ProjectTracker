@@ -1,8 +1,9 @@
-package com.alexzhelyapov1;
+package com.alexzhelyapov1.dao;
 
 // ProjectDAO.java
+import com.alexzhelyapov1.model.Project;
+
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,20 @@ public class ProjectDAO {
             pstmt.setString(1, project.getName());
             pstmt.setString(2, project.getTags());
             pstmt.setDate(3, Date.valueOf(project.getDeadline()));
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void updateProject(Project project) throws SQLException {
+        String sql = "UPDATE projects SET name = ?, tags = ?, deadline = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, project.getName());
+            pstmt.setString(2, project.getTags());
+            pstmt.setDate(3, Date.valueOf(project.getDeadline()));
+            pstmt.setInt(4, project.getId());
             pstmt.executeUpdate();
         }
     }

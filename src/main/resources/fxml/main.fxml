@@ -8,11 +8,16 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.alexzhelyapov1.MainController">
+            fx:controller="com.alexzhelyapov1.controllers.MainController">
 
     <top>
         <ToolBar>
             <Button text="Добавить проект" onAction="#handleAddProject">
+                <padding>
+                    <Insets top="2" right="5" bottom="2" left="5"/>
+                </padding>
+            </Button>
+            <Button text="Добавить день" onAction="#handleAddDay">
                 <padding>
                     <Insets top="2" right="5" bottom="2" left="5"/>
                 </padding>
@@ -40,5 +45,14 @@
 <!--    <stylesheets>-->
 <!--        <URL value="@styles.css" />-->
 <!--    </stylesheets>-->
+
+<!--    CSS -->
+<!--    .editable-header {-->
+<!--    -fx-cursor: hand;-->
+<!--    }-->
+
+<!--    .editable-header:hover {-->
+<!--    -fx-background-color: #e0e0e0;-->
+<!--    }-->
 
 </BorderPane>
