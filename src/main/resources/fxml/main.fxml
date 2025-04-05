@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.alexzhelyapov1.MainController">
+
+    <top>
+        <ToolBar>
+            <Button text="Добавить проект" onAction="#handleAddProject">
+                <padding>
+                    <Insets top="2" right="5" bottom="2" left="5"/>
+                </padding>
+            </Button>
+        </ToolBar>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <TableView fx:id="tableView" editable="true">
+                <columns>
+                    <TableColumn fx:id="dateColumn" text="Дата" editable="false">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="date" />
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </ScrollPane>
+    </center>
+
+<!--    <stylesheets>-->
+<!--        <URL value="@styles.css" />-->
+<!--    </stylesheets>-->
+
+</BorderPane>
