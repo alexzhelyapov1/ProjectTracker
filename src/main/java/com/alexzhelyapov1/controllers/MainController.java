@@ -69,6 +69,11 @@ public class MainController implements Initializable {
         trackingDays.sort(Comparator.comparing(TrackingDay::getDate).reversed());
     }
 
+    @FXML
+    private void handleRefresh() {
+        setupTableColumns();
+    }
+
     private void setupTableColumns() {
         tableView.getColumns().clear();
 
@@ -111,6 +116,34 @@ public class MainController implements Initializable {
 
             tableView.getColumns().add(col);
         }
+
+        // Настройка динамического изменения ширины
+        tableView.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() > 0) {
+                // Фиксируем ширину первой колонки
+                double firstColumnWidth = 150; // или dateColumn.getPrefWidth()
+                dateColumn.setPrefWidth(firstColumnWidth);
+
+                // Распределяем оставшееся пространство между остальными колонками
+                double remainingWidth = newVal.doubleValue() - firstColumnWidth;
+                int projectColumns = Math.max(1, projects.size());
+                double columnWidth = remainingWidth / projectColumns;
+
+                for (int i = 1; i < tableView.getColumns().size(); i++) {
+                    tableView.getColumns().get(i).setPrefWidth(columnWidth);
+                }
+            }
+        });
+
+        // Первоначальная настройка ширины
+        Platform.runLater(() -> {
+            double firstColumnWidth = 100;
+            dateColumn.setPrefWidth(firstColumnWidth);
+            double columnWidth = (tableView.getWidth() - firstColumnWidth) / projects.size();
+            for (int i = 1; i < tableView.getColumns().size(); i++) {
+                tableView.getColumns().get(i).setPrefWidth(columnWidth);
+            }
+        });
 
         tableView.setItems(trackingDays);
     }

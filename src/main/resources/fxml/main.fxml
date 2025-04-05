@@ -19,6 +19,11 @@
                     <Insets bottom="2" left="5" right="5" top="2" />
                 </padding>
             </Button>
+            <Button onAction="#handleRefresh" text="Refresh">
+                <padding>
+                    <Insets bottom="2" left="5" right="5" top="2" />
+                </padding>
+            </Button>
         </ToolBar>
     </top>
 
